@@ -93,20 +93,27 @@ if srv then
             --parsing http header
             local _, _, url = payload:gmatch("[^\r\n]+")():find("GET ([%a%d%p]*) HTTP")
 
-            local response = "HTTP/1.1 200 OK\r\n\r\n"
+            local response_header = "HTTP/1.1 200 OK\r\n\r\n"
+            local response_body = ""
+
+            local create_pair = function(key, value)
+                return "{\""..key.."\":\""..value.."\"}"
+            end
 
             if GLOBAL_CONSTANTS["FATAL_ERROR"] ~= nil then
-                response = response..GLOBAL_CONSTANTS["FATAL_ERROR"]        
+                response_body = create_pair("Error", GLOBAL_CONSTANTS["FATAL_ERROR"])
             elseif url ~= nil then
-                local success, string_error = pcall(loadfile("route.lua"), url)
+                local success, error_string, result_string = pcall(loadfile("route.lua"), url)
                 if not success then
-                    response = response.."Error: "..string_error
+                    response_body = create_pair("Error", error_string)
                 else
-                    response = response.."Ok"
+                    response_body = create_pair("Result", (result_string or "Ok"))
                 end 
             else
-                response = response.."Header error"
+                response_body = create_pair("Error", "Invalid request")
             end
+
+            local response = response_header..response_body
 
             print(response)
             
