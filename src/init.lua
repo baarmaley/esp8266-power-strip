@@ -17,7 +17,7 @@ GLOBAL_CONSTANTS = {
     BUTTON_BINDING = { [5] = 1, [6] = 4 },
     
     has_value = function(tab, val)
-        for index, value in pairs(tab) do
+        for index, value in ipairs(tab) do
             if value == val then
                 return true
             end
@@ -96,21 +96,29 @@ if srv then
             local response_header = "HTTP/1.1 200 OK\r\n\r\n"
             local response_body = ""
 
-            local create_pair = function(key, value)
+            local create_pair_with_string = function(key, value)
                 return "{\""..key.."\":\""..value.."\"}"
             end
 
+            local create_pair_with_object = function(key, value)
+                return "{\""..key.."\":"..value.."}"
+            end
+                      
             if GLOBAL_CONSTANTS["FATAL_ERROR"] ~= nil then
-                response_body = create_pair("Error", GLOBAL_CONSTANTS["FATAL_ERROR"])
+                response_body = create_pair_with_string("Error", GLOBAL_CONSTANTS["FATAL_ERROR"])
             elseif url ~= nil then
                 local success, error_string, result_string = pcall(loadfile("route.lua"), url)
                 if not success then
-                    response_body = create_pair("Error", error_string)
+                    response_body = create_pair_with_string("Error", error_string)
                 else
-                    response_body = create_pair("Result", (result_string or "Ok"))
+                    if result_string ~= nil then
+                        response_body = create_pair_with_object("Result", result_string)
+                    else
+                        response_body = create_pair_with_string("Result", "Ok")
+                    end
                 end 
             else
-                response_body = create_pair("Error", "Invalid request")
+                response_body = create_pair_with_string("Error", "Invalid request")
             end
 
             local response = response_header..response_body
