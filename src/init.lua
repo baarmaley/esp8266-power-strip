@@ -12,9 +12,11 @@ GLOBAL_CONSTANTS = {
         
     BUTTON_PIN = { 5, 6 },
 
-    OUTPUT_PIN = { 1, 4 },
+    BUTTON_STATE = {},
 
-    BUTTON_BINDING = { [5] = 1, [6] = 4 },
+    OUTPUT_PIN = { 1, 2 },
+
+    BUTTON_BINDING = { [5] = 1, [6] = 2 },
     
     has_value = function(tab, val)
         for index, value in ipairs(tab) do
