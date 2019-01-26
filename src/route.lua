@@ -5,8 +5,10 @@ if url == nil then
 end
 
 if GLOBAL_CONSTANTS == nil then
-    error("Run only from init.lua")
+    error("Run only after init.lua")
 end
+
+local success_result = "\"Ok\""
 
 local check_pinout = function(pinout)
     if GLOBAL_CONSTANTS["has_value"](GLOBAL_CONSTANTS["OUTPUT_PIN"], tonumber(pinout)) == false then
@@ -36,23 +38,29 @@ local routing_set = {
             fd:flush()
             fd:close()
             node.restart()
+            return success_result
         end
     end
 }
+
+
 
 local routing_action = {
     on = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.HIGH)
+        return success_result
     end,
 
     off = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.LOW)
+        return success_result
     end,
     inversion = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.read(pinout) == 1 and gpio.LOW or gpio.HIGH)
+        return success_result
     end 
 }
 

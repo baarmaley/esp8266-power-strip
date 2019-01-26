@@ -116,7 +116,7 @@ if srv then
                     if result_string ~= nil then
                         response_body = create_pair_with_object("Result", result_string)
                     else
-                        response_body = create_pair_with_string("Result", "Ok")
+                        response_body = create_pair_with_string("Error", "Invalid request")
                     end
                 end 
             else
