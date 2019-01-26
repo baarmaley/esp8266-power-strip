@@ -87,13 +87,22 @@ if(settings_file ~= nil) then
     settings_file:close()
 end
 
-
-srv=net.createServer(net.TCP) 
+srv=net.createServer(net.TCP, 1) 
 if srv then 
     srv:listen(80,function(conn) 
-        conn:on("receive",function(conn,payload) 
+
+        conn:on("receive",function(sck,payload) 
             --parsing http header
-            local _, _, url = payload:gmatch("[^\r\n]+")():find("GET ([%a%d%p]*) HTTP")
+            
+            local is_success_parse, _, _, url = pcall(function()
+                    return payload:gmatch("[^\r\n]+")():find("GET ([%a%d%p]*) HTTP")
+                    end)
+          
+            if not is_success_parse then
+                print("Parsing error: "..payload)
+                conn:close()
+                do return end
+            end
 
             local response_header = "HTTP/1.1 200 OK\r\n\r\n"
             local response_body = ""
@@ -127,9 +136,9 @@ if srv then
 
             print(response)
             
-            conn:send(response, function(conn)
+            sck:send(response, function(sck)
                 conn:close()
                 end)
-            end) 
+            end)
     end)
 end
