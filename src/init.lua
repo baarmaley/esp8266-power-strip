@@ -87,58 +87,12 @@ if(settings_file ~= nil) then
     settings_file:close()
 end
 
-srv=net.createServer(net.TCP, 1) 
-if srv then 
-    srv:listen(80,function(conn) 
+print("Server start")
 
-        conn:on("receive",function(sck,payload) 
-            --parsing http header
-            
-            local is_success_parse, _, _, url = pcall(function()
-                    return payload:gmatch("[^\r\n]+")():find("GET ([%a%d%p]*) HTTP")
-                    end)
-          
-            if not is_success_parse then
-                print("Parsing error: "..payload)
-                conn:close()
-                do return end
-            end
-
-            local response_header = "HTTP/1.1 200 OK\r\n\r\n"
-            local response_body = ""
-
-            local create_pair_with_string = function(key, value)
-                return "{\""..key.."\":\""..value.."\"}"
-            end
-
-            local create_pair_with_object = function(key, value)
-                return "{\""..key.."\":"..value.."}"
-            end
-                      
-            if GLOBAL_CONSTANTS["FATAL_ERROR"] ~= nil then
-                response_body = create_pair_with_string("Error", GLOBAL_CONSTANTS["FATAL_ERROR"])
-            elseif url ~= nil then
-                local success, error_string, result_string = pcall(loadfile("route.lua"), url)
-                if not success then
-                    response_body = create_pair_with_string("Error", error_string)
-                else
-                    if result_string ~= nil then
-                        response_body = create_pair_with_object("Result", result_string)
-                    else
-                        response_body = create_pair_with_string("Error", "Invalid request")
-                    end
-                end 
-            else
-                response_body = create_pair_with_string("Error", "Invalid request")
-            end
-
-            local response = response_header..response_body
-
-            print(response)
-            
-            sck:send(response, function(sck)
-                conn:close()
-                end)
-            end)
-    end)
+local server_result, server_string_error = pcall(loadfile("server.lua"))
+if not server_result then
+    GLOBAL_CONSTANTS["FATAL_ERROR"] = server_string_error
+    print("Server: "..GLOBAL_CONSTANTS["FATAL_ERROR"])
+else
+    print("Server ok")
 end
