@@ -28,7 +28,7 @@ local pressed_handler = function(pin_input)
     end  
 end
 
-timer_button:alarm(100, tmr.ALARM_SEMI, function()
+timer_button:alarm(100, tmr.ALARM_SEMI, function(current_timer)
         --print("Timer out")
         for _, btn_pin in pairs(GLOBAL_CONSTANTS["BUTTON_PIN"]) do
             local btn_state = gpio.read(btn_pin)
@@ -40,7 +40,7 @@ timer_button:alarm(100, tmr.ALARM_SEMI, function()
 
             GLOBAL_CONSTANTS["BUTTON_STATE"][btn_pin] = btn_state
         end
-        timer_button:start()
+        current_timer:start()
 end)
 
 timer_button:start()

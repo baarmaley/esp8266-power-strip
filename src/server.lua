@@ -54,9 +54,28 @@ local receive_handler = function(sck,payload)
 	sck:send(response, sent_handler)
 end
 
+local timer_udp = tmr.create()
+
 srv=net.createServer(net.TCP) 
 if srv then 
     srv:listen(80,function(sck) 
         sck:on("receive", receive_handler)
 	end)
+end
+
+udpSrv = net.createUDPSocket()
+if udpSrv then
+ print("Udp server: start")
+ timer_udp:alarm(GLOBAL_CONSTANTS["UDP_INTERVAL"], tmr.ALARM_SEMI, function(current_timer)
+    if GLOBAL_CONSTANTS["WIFI_STATE"] == "as_station" then
+        local success, error_string, result_route = pcall(loadfile("route.lua"), "debug")
+        if success and result_route ~= nil then 
+            udpSrv:send(GLOBAL_CONSTANTS["UDP_PORT"], "255.255.255.255", create_pair_with_object("Debug", result_route))
+        else
+            print("Udp route error: "..error_string)
+        end
+    end
+    current_timer:start()
+ end)
+ timer_udp:start()
 end

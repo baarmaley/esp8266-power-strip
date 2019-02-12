@@ -92,7 +92,7 @@ local routing = {
         local result = {}
         result[#result + 1] = "{"
         result[#result + 1] = "\"last_change\":\""..GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"].."\","
-        result[#result + 1] = "\"uptime\": "..(tmr.now()/1000000)..","
+        result[#result + 1] = "\"uptime\": "..tmr.time()..","
         result[#result + 1] = "\"heap\":"..node.heap()
         result[#result + 1] = "}"
         return table.concat(result)

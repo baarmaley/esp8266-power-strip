@@ -9,6 +9,12 @@ GLOBAL_CONSTANTS = {
     SETUP_MODE = false,
 
     FATAL_ERROR = nil,
+
+    WIFI_STATE = nil,
+
+    UDP_PORT = 55100,
+
+    UDP_INTERVAL = 1000,
         
     BUTTON_PIN = { 5, 6 },
 
@@ -41,7 +47,8 @@ if(gpio.read(switching_mode_pin) == 0 or settings_file == nil) then
     print("Setup mode")
     GLOBAL_CONSTANTS["SETUP_MODE"] = true
     wifi.setmode(wifi.SOFTAP, false)
-    wifi.ap.config({ssid=GLOBAL_CONSTANTS["SETTINGS"]["ssid_settings_name"], auth=wifi.OPEN, save=false})    
+    wifi.ap.config({ssid=GLOBAL_CONSTANTS["SETTINGS"]["ssid_settings_name"], auth=wifi.OPEN, save=false})
+    GLOBAL_CONSTANTS["WIFI_STATE"] = "as_ap"    
 else
     print("Normal mode")
     local find_pattern = function(field)
