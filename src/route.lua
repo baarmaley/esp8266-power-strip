@@ -43,23 +43,28 @@ local routing_set = {
     end
 }
 
-
+local change_button_event = function()
+    GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"] = "Server"
+end
 
 local routing_action = {
     on = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.HIGH)
+        change_button_event()
         return success_result
     end,
 
     off = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.LOW)
+        change_button_event()
         return success_result
     end,
     inversion = function(pinout)
         check_pinout(pinout)
         gpio.write(pinout, gpio.read(pinout) == 1 and gpio.LOW or gpio.HIGH)
+        change_button_event()
         return success_result
     end 
 }
@@ -81,6 +86,15 @@ local routing = {
             result[#result + 1] = ","
         end
         result[#result] = "}"
+        return table.concat(result)
+    end,
+    debug = function()
+        local result = {}
+        result[#result + 1] = "{"
+        result[#result + 1] = "\"last_change\":\""..GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"].."\","
+        result[#result + 1] = "\"uptime\": "..(tmr.now()/1000000)..","
+        result[#result + 1] = "\"heap\":"..node.heap()
+        result[#result + 1] = "}"
         return table.concat(result)
     end
 }

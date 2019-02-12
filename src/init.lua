@@ -16,6 +16,8 @@ GLOBAL_CONSTANTS = {
 
     OUTPUT_PIN = { 1, 2 },
 
+    OUTPUT_LAST_CHANGE = "Default",
+
     BUTTON_BINDING = { [5] = 1, [6] = 2 },
     
     has_value = function(tab, val)

@@ -1,3 +1,6 @@
+if GLOBAL_CONSTANTS == nil then
+    error("Run only after init.lua")
+end
 
 local SSID, PASSWORD = ...
 

@@ -22,7 +22,7 @@ local pressed_handler = function(pin_input)
         do return end
     end
     local success, string_error = pcall(loadfile("route.lua"), "/action/inversion/"..pin_out)
-    
+    GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"] = "Button pressed"
     if not success then
         print("Error: "..string_error)
     end  
