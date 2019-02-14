@@ -3,7 +3,11 @@ GLOBAL_CONSTANTS = {
         ssid_settings_name = "ESP8266_CONFIG",
         filename = "settings.ini",
         ssid_prefix = "SSID=",
-        password_prefix = "PASSWORD="
+        password_prefix = "PASSWORD=",
+        device_type_filename = "type.ini",
+        device_type = "undefined",
+        deivice_id_filename = "id.ini",
+        device_id = "0"
     },
 
     SETUP_MODE = false,
@@ -38,11 +42,23 @@ GLOBAL_CONSTANTS = {
 
 
 local switching_mode_pin = 5
-local settings_file = file.open(GLOBAL_CONSTANTS["SETTINGS"]["filename"], "r")
-
 gpio.mode(switching_mode_pin, gpio.INT, gpio.PULLUP)
 
-print(gpio.read(switching_mode_pin))
+local load_settings_from_file = function(filename, key)
+    local f = file.open(filename, "r")
+    if f ~= nil then
+        GLOBAL_CONSTANTS["SETTINGS"][key] = f:readline()
+        print("Load "..key..": "..GLOBAL_CONSTANTS["SETTINGS"][key].." from "..filename)
+    else
+        print("Failed load value from "..filename)
+    end
+end
+
+load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["device_type_filename"], "device_type")
+load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["deivice_id_filename"], "device_id")
+
+local settings_file = file.open(GLOBAL_CONSTANTS["SETTINGS"]["filename"], "r")
+
 if(gpio.read(switching_mode_pin) == 0 or settings_file == nil) then
     print("Setup mode")
     GLOBAL_CONSTANTS["SETUP_MODE"] = true

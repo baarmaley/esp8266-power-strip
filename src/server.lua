@@ -68,11 +68,16 @@ if udpSrv then
  print("Udp server: start")
  timer_udp:alarm(GLOBAL_CONSTANTS["UDP_INTERVAL"], tmr.ALARM_SEMI, function(current_timer)
     if GLOBAL_CONSTANTS["WIFI_STATE"] == "as_station" then
-        local success, error_string, result_route = pcall(loadfile("route.lua"), "debug")
-        if success and result_route ~= nil then 
-            udpSrv:send(GLOBAL_CONSTANTS["UDP_PORT"], "255.255.255.255", create_pair_with_object("Debug", result_route))
+        local success, error_string, state_result = pcall(loadfile("route.lua"), "state")
+        if success and state_result ~= nil then
+            local debug_result = nil
+            success, error_string, debug_result = pcall(loadfile("route.lua"), "debug")
+            if success and debug_result ~= nil then
+                --the maximum size of a UDP packet is 65507 bytes         
+                udpSrv:send(GLOBAL_CONSTANTS["UDP_PORT"], "255.255.255.255", "{ \"state\" : "..state_result..", \"debug\" : "..debug_result.." }")
+            end
         else
-            print("Udp route error: "..error_string)
+            print("Udp route error: "..error_string)     
         end
     end
     current_timer:start()

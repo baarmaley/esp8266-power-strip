@@ -29,6 +29,14 @@ local check_length_string = function(str)
     return str
 end
 
+local save_settings_to_file = function(filename, key, value)
+    local fd = file.open(filename, "w+")
+    fd:write(value)
+    fd:flush()
+    fd:close()
+    GLOBAL_CONSTANTS["SETTINGS"][key] = value
+end
+
 local routing_set = {
     station = function(ssid)
         return function(password)
@@ -40,6 +48,14 @@ local routing_set = {
             node.restart()
             return success_result
         end
+    end,
+    device_type = function(type)    
+        save_settings_to_file(GLOBAL_CONSTANTS["SETTINGS"]["device_type_filename"], "device_type", type)
+        return success_result
+    end,
+    device_id = function(id)
+        save_settings_to_file(GLOBAL_CONSTANTS["SETTINGS"]["deivice_id_filename"], "device_id", id)
+        return success_result
     end
 }
 
@@ -80,12 +96,15 @@ local routing = {
     state = function()
         local result = {}
         result[#result + 1] = "{"
+        result[#result + 1] = " \"device_id\" : \""..GLOBAL_CONSTANTS["SETTINGS"]["device_id"].."\","
+        result[#result + 1] = " \"device_type\" : \""..GLOBAL_CONSTANTS["SETTINGS"]["device_type"].."\","
+        result[#result + 1] = " \"output_pin\" : {"
         for _, pinout in ipairs(GLOBAL_CONSTANTS["OUTPUT_PIN"]) do
             result[#result + 1] = "\""..pinout.."\":"
             result[#result + 1] = "\""..gpio.read(pinout).."\""
             result[#result + 1] = ","
         end
-        result[#result] = "}"
+        result[#result] = "}}"
         return table.concat(result)
     end,
     debug = function()
