@@ -43,7 +43,7 @@ wifi_disconnect_event = function(T)
   for key,val in pairs(wifi.eventmon.reason) do
     if val == T.reason then
       print("Disconnect reason: "..val.."("..key..")")
-      GLOBAL_CONSTANTS["DEBUG"]["WIFI_RECONNECT_COUNT"] = key
+      GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"] = key
       break
     end
   end
