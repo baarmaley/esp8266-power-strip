@@ -73,7 +73,7 @@ if udpSrv then
             local debug_result = nil
             success, error_string, debug_result = pcall(loadfile("route.lua"), "debug")
             if success and debug_result ~= nil then
-                --the maximum size of a UDP packet is 65507 bytes         
+                --the maximum size of a UDP packet is 65507 bytes       
                 udpSrv:send(GLOBAL_CONSTANTS["UDP_PORT"], "255.255.255.255", "{ \"state\" : "..state_result..", \"debug\" : "..debug_result.." }")
             end
         else

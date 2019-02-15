@@ -60,7 +60,7 @@ local routing_set = {
 }
 
 local change_button_event = function()
-    GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"] = "Server"
+    GLOBAL_CONSTANTS["DEBUG"]["OUTPUT_LAST_CHANGE"] = "Server"
 end
 
 local routing_action = {
@@ -110,10 +110,19 @@ local routing = {
     debug = function()
         local result = {}
         result[#result + 1] = "{"
-        result[#result + 1] = "\"last_change\":\""..GLOBAL_CONSTANTS["OUTPUT_LAST_CHANGE"].."\","
+        result[#result + 1] = "\"last_change\":\""..GLOBAL_CONSTANTS["DEBUG"]["OUTPUT_LAST_CHANGE"].."\","
         result[#result + 1] = "\"uptime\": "..tmr.time()..","
-        result[#result + 1] = "\"heap\":"..node.heap()
-        result[#result + 1] = "}"
+        result[#result + 1] = "\"heap\":"..node.heap()..","
+        result[#result + 1] = "\"connection_timepoint\":"..(tmr.time() - GLOBAL_CONSTANTS["DEBUG"]["WIFI_CONNECTION_TIMEPOINT"])..","
+        result[#result + 1] = "\"reconnect_count\" :"..GLOBAL_CONSTANTS["DEBUG"]["WIFI_RECONNECT_COUNT"]
+        result[#result + 1] = ","
+        
+        if GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"] ~= nil  then
+            result[#result + 1] = "\"last_reason_reconnection\":\""..GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"].."\""
+            result[#result + 1] = ","
+        end
+        
+        result[#result] = "}}"
         return table.concat(result)
     end
 }

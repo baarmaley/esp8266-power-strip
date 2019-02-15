@@ -16,6 +16,13 @@ GLOBAL_CONSTANTS = {
 
     WIFI_STATE = nil,
 
+    DEBUG = {
+        WIFI_CONNECTION_TIMEPOINT = nil,
+        WIFI_RECONNECT_COUNT = 0,
+        WIFI_LAST_REASON_RECONNECTION = nil,
+        OUTPUT_LAST_CHANGE = "Default",
+    },
+
     UDP_PORT = 55100,
 
     UDP_INTERVAL = 1000,
@@ -26,7 +33,6 @@ GLOBAL_CONSTANTS = {
 
     OUTPUT_PIN = { 1, 2 },
 
-    OUTPUT_LAST_CHANGE = "Default",
 
     BUTTON_BINDING = { [5] = 1, [6] = 2 },
     
