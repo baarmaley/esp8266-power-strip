@@ -116,13 +116,18 @@ local routing = {
         result[#result + 1] = "\"connection_timepoint\":"..(tmr.time() - GLOBAL_CONSTANTS["DEBUG"]["WIFI_CONNECTION_TIMEPOINT"])..","
         result[#result + 1] = "\"reconnect_count\" :"..GLOBAL_CONSTANTS["DEBUG"]["WIFI_RECONNECT_COUNT"]
         result[#result + 1] = ","
+
+        if GLOBAL_CONSTANTS["WIFI_STATE"] == "as_station" then
+            result[#result + 1] = "\"rssi\":\""..wifi.sta.getrssi().."\""
+            result[#result + 1] = ","
+        end
         
         if GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"] ~= nil  then
             result[#result + 1] = "\"last_reason_reconnection\":\""..GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"].."\""
             result[#result + 1] = ","
         end
         
-        result[#result] = "}}"
+        result[#result] = "}"
         return table.concat(result)
     end
 }
