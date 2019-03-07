@@ -96,12 +96,12 @@ local routing = {
     state = function()
         local result = {}
         result[#result + 1] = "{"
-        result[#result + 1] = " \"device_id\" : \""..GLOBAL_CONSTANTS["SETTINGS"]["device_id"].."\","
+        result[#result + 1] = " \"device_id\" : "..GLOBAL_CONSTANTS["SETTINGS"]["device_id"]..","
         result[#result + 1] = " \"device_type\" : \""..GLOBAL_CONSTANTS["SETTINGS"]["device_type"].."\","
         result[#result + 1] = " \"output_pin\" : {"
         for _, pinout in ipairs(GLOBAL_CONSTANTS["OUTPUT_PIN"]) do
             result[#result + 1] = "\""..pinout.."\":"
-            result[#result + 1] = "\""..gpio.read(pinout).."\""
+            result[#result + 1] = gpio.read(pinout)
             result[#result + 1] = ","
         end
         result[#result] = "}}"
@@ -118,7 +118,7 @@ local routing = {
         result[#result + 1] = ","
 
         if GLOBAL_CONSTANTS["WIFI_STATE"] == "as_station" then
-            result[#result + 1] = "\"rssi\":\""..wifi.sta.getrssi().."\""
+            result[#result + 1] = "\"rssi\":"..wifi.sta.getrssi()..""
             result[#result + 1] = ","
         end
         
