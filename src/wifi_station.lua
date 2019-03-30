@@ -20,7 +20,7 @@ wifi_got_ip_event = function(T)
   -- Internet connectivity can be determined with net.dns.resolve().    
   print("Wifi connection is ready! IP address is: "..T.IP)
   GLOBAL_CONSTANTS["WIFI_STATE"] = "as_station"
-  GLOBAL_CONSTANTS["DEBUG"]["WIFI_CONNECTION_TIMEPOINT"] = tmr.time()
+  GLOBAL_CONSTANTS["WIFI_INFO"]["CONNECTION_TIMEPOINT"] = tmr.time()
   --print("Startup will resume momentarily, you have 3 seconds to abort.")
   --print("Waiting...") 
   --tmr.create():alarm(3000, tmr.ALARM_SINGLE, startup)
@@ -32,8 +32,8 @@ wifi_disconnect_event = function(T)
     return 
   end
   GLOBAL_CONSTANTS["WIFI_STATE"] = nil
-  GLOBAL_CONSTANTS["DEBUG"]["WIFI_CONNECTION_TIMEPOINT"] = nil
-  GLOBAL_CONSTANTS["DEBUG"]["WIFI_RECONNECT_COUNT"] = GLOBAL_CONSTANTS["DEBUG"]["WIFI_RECONNECT_COUNT"] + 1
+  GLOBAL_CONSTANTS["WIFI_INFO"]["CONNECTION_TIMEPOINT"] = nil
+  GLOBAL_CONSTANTS["WIFI_INFO"]["RECONNECT_COUNT"] = GLOBAL_CONSTANTS["WIFI_INFO"]["RECONNECT_COUNT"] + 1
   -- total_tries: how many times the station will attempt to connect to the AP. Should consider AP reboot duration.
   local total_tries = 75
   print("\nWiFi connection to AP("..T.SSID..") has failed!")
@@ -43,7 +43,7 @@ wifi_disconnect_event = function(T)
   for key,val in pairs(wifi.eventmon.reason) do
     if val == T.reason then
       print("Disconnect reason: "..val.."("..key..")")
-      GLOBAL_CONSTANTS["DEBUG"]["WIFI_LAST_REASON_RECONNECTION"] = key
+      GLOBAL_CONSTANTS["WIFI_INFO"]["LAST_REASON_RECONNECTION"] = key
       break
     end
   end

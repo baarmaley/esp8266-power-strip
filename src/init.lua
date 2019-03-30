@@ -7,7 +7,9 @@ GLOBAL_CONSTANTS = {
         device_type_filename = "type.ini",
         device_type = "undefined",
         deivice_id_filename = "id.ini",
-        device_id = "0"
+        device_id = "0",
+        device_name_filename = "device_name.ini",
+        device_name = ""
     },
 
     SETUP_MODE = false,
@@ -16,24 +18,33 @@ GLOBAL_CONSTANTS = {
 
     WIFI_STATE = nil,
 
-    DEBUG = {
-        WIFI_CONNECTION_TIMEPOINT = nil,
-        WIFI_RECONNECT_COUNT = 0,
-        WIFI_LAST_REASON_RECONNECTION = nil,
-        OUTPUT_LAST_CHANGE = "Default",
+    WIFI_INFO = {
+        CONNECTION_TIMEPOINT = nil,
+        RECONNECT_COUNT = 0,
+        LAST_REASON_RECONNECTION = nil
+    },
+    
+    GPIO_INFO = {
+        OUTPUT_LAST_CHANGE = "Default"
     },
 
-    UDP_PORT = 55100,
-
-    UDP_INTERVAL = 1000,
+    UDP_SERVER_SETTINGS = {
+        PORT = 55100,
+        INTERVAL = 1000,
+    },
         
     BUTTON_PIN = { 5, 6 },
 
     BUTTON_STATE = {},
 
+    OUTPUT_PIN_NAMES = {},
+    
+    OUTPUT_PIN_NAME_FILENAME = function(pinout) 
+        return "relay/name/"..pinout
+    end,
+    
     OUTPUT_PIN = { 1, 2 },
-
-
+    
     BUTTON_BINDING = { [5] = 1, [6] = 2 },
     
     has_value = function(tab, val)
@@ -46,22 +57,30 @@ GLOBAL_CONSTANTS = {
     end
 }
 
-
-local switching_mode_pin = 5
-gpio.mode(switching_mode_pin, gpio.INT, gpio.PULLUP)
-
-local load_settings_from_file = function(filename, key)
+-- begin function
+local load_settings_from_file = function(filename, parent, key)
     local f = file.open(filename, "r")
     if f ~= nil then
-        GLOBAL_CONSTANTS["SETTINGS"][key] = f:readline()
-        print("Load "..key..": "..GLOBAL_CONSTANTS["SETTINGS"][key].." from "..filename)
+        GLOBAL_CONSTANTS[parent][key] = f:readline()
+        print("Load "..key..": "..GLOBAL_CONSTANTS[parent][key].." from "..filename)
+        f:close()
     else
         print("Failed load value from "..filename)
     end
 end
+-- end function
 
-load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["device_type_filename"], "device_type")
-load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["deivice_id_filename"], "device_id")
+local switching_mode_pin = 5
+gpio.mode(switching_mode_pin, gpio.INT, gpio.PULLUP)
+
+load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["device_type_filename"], "SETTINGS", "device_type")
+load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["deivice_id_filename"], "SETTINGS", "device_id")
+load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["device_name_filename"], "SETTINGS", "device_name")
+
+-- load name relays from files
+for _, pinout in ipairs(GLOBAL_CONSTANTS["OUTPUT_PIN"]) do
+    load_settings_from_file(GLOBAL_CONSTANTS["OUTPUT_PIN_NAME_FILENAME"](pinout), "OUTPUT_PIN_NAMES", pinout)
+end
 
 local settings_file = file.open(GLOBAL_CONSTANTS["SETTINGS"]["filename"], "r")
 
