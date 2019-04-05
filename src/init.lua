@@ -42,10 +42,12 @@ GLOBAL_CONSTANTS = {
     OUTPUT_PIN_NAME_FILENAME = function(pinout) 
         return "relay/name/"..pinout
     end,
+
+    OUTPUT_PIN = nil,
     
-    OUTPUT_PIN = { 1, 2 },
-    
-    BUTTON_BINDING = { [5] = 1, [6] = 2 },
+    BUTTON_BINDING = nil,
+	
+	SWITCHING_MODE_PIN = nil,    
     
     has_value = function(tab, val)
         for index, value in ipairs(tab) do
@@ -70,8 +72,11 @@ local load_settings_from_file = function(filename, parent, key)
 end
 -- end function
 
-local switching_mode_pin = 5
-gpio.mode(switching_mode_pin, gpio.INT, gpio.PULLUP)
+-- load config
+dofile("config.lua")
+-- end load config
+
+gpio.mode(GLOBAL_CONSTANTS["SWITCHING_MODE_PIN"], gpio.INT, gpio.PULLUP)
 
 load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["device_type_filename"], "SETTINGS", "device_type")
 load_settings_from_file(GLOBAL_CONSTANTS["SETTINGS"]["deivice_id_filename"], "SETTINGS", "device_id")
@@ -84,7 +89,7 @@ end
 
 local settings_file = file.open(GLOBAL_CONSTANTS["SETTINGS"]["filename"], "r")
 
-if(gpio.read(switching_mode_pin) == 0 or settings_file == nil) then
+if(gpio.read(GLOBAL_CONSTANTS["SWITCHING_MODE_PIN"]) == 0 or settings_file == nil) then
     print("Setup mode")
     GLOBAL_CONSTANTS["SETUP_MODE"] = true
     wifi.setmode(wifi.SOFTAP, false)
