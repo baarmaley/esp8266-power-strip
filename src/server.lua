@@ -2,7 +2,7 @@ if GLOBAL_CONSTANTS == nil then
     error("Run only after init.lua")
 end
 
-local response_header = "HTTP/1.1 200 OK\r\n\r\n"
+local response_header = "HTTP/1.0 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n"
 
 local create_pair_with_string = function(key, value)
 	return "{\""..key.."\":\""..value.."\"}"
@@ -49,7 +49,6 @@ local receive_handler = function(sck,payload)
     end
     
     local response = response_header..response_body
-    
     print(response)
     
     sck:send(response, sent_handler)
