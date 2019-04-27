@@ -6,7 +6,7 @@
 /status
 
 #### Response format
-```
+```json
 {  
    "status":{  
       "device_id":56666541,
